@@ -13,6 +13,7 @@ namespace pws
     {
         public Process Process { get; private set; }
         public short Port { get; private set; }
+        public volatile int Counter;
 
         public PhpCgiServer(short port)
         {
@@ -38,11 +39,12 @@ namespace pws
         }
 
         /// <summary>
-        /// 
+        /// 接受一个请求
         /// </summary>
         /// <param name="task"></param>
         public void Serve(TcpClient source)
         {
+            ++Counter;
             TcpClient target = new TcpClient("127.0.0.1", Port);
             target.SendTimeout = 300000;
             target.ReceiveTimeout = 300000;
@@ -94,6 +96,7 @@ namespace pws
                 responser.Dispose();
                 transfer.Source.Close();
                 transfer.Target.Close();
+                --Counter;
             }, task);
         }
     }

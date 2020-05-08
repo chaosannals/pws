@@ -12,6 +12,7 @@ namespace pws
 
         public PhpCgiService()
         {
+            "服务初始化".Log();
             proxy = new PhpCgiServerProxy();
         }
 

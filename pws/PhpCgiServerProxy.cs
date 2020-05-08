@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -14,7 +15,7 @@ namespace pws
         private System.Timers.Timer ticker;
         private Thread thread;
         private TcpListener listener;
-        private PhpCgiServer server;
+        private PhpCgiServer[] servers;
 
         public PhpCgiServerProxy(short port=9000)
         {
@@ -24,21 +25,31 @@ namespace pws
             ticker = new System.Timers.Timer();
             ticker.Elapsed += new ElapsedEventHandler((sender, args) =>
             {
-                if (server.Process.HasExited)
+                foreach (PhpCgiServer server in servers)
                 {
-                    server.Process.Start();
+                    if (server.Process.HasExited)
+                    {
+                        server.Process.Start();
+                    }
                 }
                 Work();
             });
             ticker.Interval = 2000;
             ticker.Enabled = true;
-            server = new PhpCgiServer(9001);
+            servers = new PhpCgiServer[6];
+            for (short i = 0; i < servers.Length; ++i)
+            {
+                servers[i] = new PhpCgiServer((short)(i + 9001));
+            }
         }
 
         public void Start()
         {
-            server.Process.Start();
-            server.Process.BeginOutputReadLine();
+            foreach (PhpCgiServer server in servers)
+            {
+                server.Process.Start();
+                server.Process.BeginOutputReadLine();
+            }
             listener.Start();
             Work();
             ticker.Start();
@@ -49,8 +60,11 @@ namespace pws
             ticker.Stop();
             thread.Abort();
             listener.Stop();
-            server.Process.Kill();
-            server.Process.Close();
+            foreach (PhpCgiServer server in servers)
+            {
+                server.Process.Kill();
+                server.Process.Close();
+            }
         }
 
         public void Work()
@@ -66,7 +80,14 @@ namespace pws
                             TcpClient source = listener.AcceptTcpClient();
                             source.SendTimeout = 300000;
                             source.ReceiveTimeout = 300000;
-                            server.Serve(source);
+                            "开始请求".Log();
+                            Array.Sort(servers, (a, b) =>
+                            {
+                                return a.Counter - b.Counter;
+                            });
+                            PhpCgiServer worker = servers[0];
+                            worker.Serve(source);
+                            string.Format("转发到 {0:D} 端口", worker.Port).Log();
                         }
                         catch (Exception e)
                         {
@@ -74,6 +95,7 @@ namespace pws
                         }
                     }
                 });
+                thread.Start();
             }
         }
     }
