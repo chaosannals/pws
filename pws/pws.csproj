@@ -8,9 +8,10 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>pws</RootNamespace>
     <AssemblyName>pws</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,12 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PHPCGIService.cs">
+    <Compile Include="LogExtends.cs" />
+    <Compile Include="PhpCgiServer.cs" />
+    <Compile Include="PhpCgiServerProxy.cs" />
+    <Compile Include="PhpCgiService.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PHPCGIService.Designer.cs">
-      <DependentUpon>PHPCGIService.cs</DependentUpon>
+    <Compile Include="PhpCgiService.Designer.cs">
+      <DependentUpon>PhpCgiService.cs</DependentUpon>
     </Compile>
+    <Compile Include="PhpCgiTransfer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -59,6 +64,9 @@
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

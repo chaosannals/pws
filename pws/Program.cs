@@ -15,7 +15,7 @@ namespace pws
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new PHPCGIService()
+                new PhpCgiService()
             };
             ServiceBase.Run(ServicesToRun);
         }

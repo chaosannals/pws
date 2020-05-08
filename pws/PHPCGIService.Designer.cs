@@ -1,6 +1,6 @@
 ﻿namespace pws
 {
-    partial class PHPCGIService
+    partial class PhpCgiService
     {
         /// <summary> 
         /// 必需的设计器变量。
