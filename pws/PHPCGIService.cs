@@ -4,15 +4,18 @@ using System.ServiceProcess;
 namespace pws
 {
     /// <summary>
-    /// 
+    /// 服务
     /// </summary>
     public partial class PhpCgiService : ServiceBase
     {
         private PhpCgiServerProxy proxy;
 
+        /// <summary>
+        /// 服务初始化
+        /// </summary>
         public PhpCgiService()
         {
-            "服务初始化".Log();
+            "PHP-CGI Server Initialize".Log();
             proxy = new PhpCgiServerProxy();
         }
 
@@ -38,8 +41,15 @@ namespace pws
         /// </summary>
         protected override void OnStop()
         {
-            proxy.Stop();
-            "PHP-CGI Stop".Log();
+            try
+            {
+                proxy.Stop();
+                "PHP-CGI Stop".Log();
+            }
+            catch (Exception e)
+            {
+                e.ToString().Log();
+            }
         }
     }
 }

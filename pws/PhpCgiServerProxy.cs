@@ -8,7 +8,7 @@ using System.Timers;
 namespace pws
 {
     /// <summary>
-    /// 
+    /// PHP CGI 反向代理
     /// </summary>
     public class PhpCgiServerProxy
     {
@@ -17,6 +17,10 @@ namespace pws
         private TcpListener listener;
         private PhpCgiServer[] servers;
 
+        /// <summary>
+        /// 初始化代理
+        /// </summary>
+        /// <param name="port"></param>
         public PhpCgiServerProxy(short port=9000)
         {
             IPAddress address = IPAddress.Parse("0.0.0.0");
@@ -32,6 +36,10 @@ namespace pws
                         server.Process.Start();
                     }
                 }
+                if (!listener.Server.IsBound)
+                {
+                    listener.Start();
+                }
                 Work();
             });
             ticker.Interval = 2000;
@@ -43,6 +51,9 @@ namespace pws
             }
         }
 
+        /// <summary>
+        /// 启动代理
+        /// </summary>
         public void Start()
         {
             foreach (PhpCgiServer server in servers)
@@ -55,6 +66,9 @@ namespace pws
             ticker.Start();
         }
 
+        /// <summary>
+        /// 停止代理
+        /// </summary>
         public void Stop()
         {
             ticker.Stop();
@@ -73,26 +87,31 @@ namespace pws
             {
                 thread = new Thread(() =>
                 {
-                    while (true)
+                    try
                     {
-                        try
+                        while (true)
                         {
                             TcpClient source = listener.AcceptTcpClient();
                             source.SendTimeout = 300000;
                             source.ReceiveTimeout = 300000;
                             "开始请求".Log();
+                            // 根据 Counter 分发请求
                             Array.Sort(servers, (a, b) =>
                             {
                                 return a.Counter - b.Counter;
                             });
                             PhpCgiServer worker = servers[0];
                             worker.Serve(source);
-                            string.Format("转发到 {0:D} 端口", worker.Port).Log();
+                            "转发到 {0:D} 端口".Log(worker.Port);
                         }
-                        catch (Exception e)
-                        {
-                            e.ToString().Log();
-                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.ToString().Log();
+                    }
+                    finally
+                    {
+                        listener.Stop();
                     }
                 });
                 thread.Start();
