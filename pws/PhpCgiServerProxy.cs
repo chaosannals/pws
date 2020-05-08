@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -29,18 +28,27 @@ namespace pws
             ticker = new System.Timers.Timer();
             ticker.Elapsed += new ElapsedEventHandler((sender, args) =>
             {
-                foreach (PhpCgiServer server in servers)
+                try
                 {
-                    if (server.Process.HasExited)
+                    foreach (PhpCgiServer server in servers)
                     {
-                        server.Process.Start();
+                        if (server.Process.HasExited)
+                        {
+                            "重启 PHP CGI 服务 {0:D} 端口".Log(server.Port);
+                            server.Process.Start();
+                        }
                     }
+                    if (!listener.Server.IsBound)
+                    {
+                        "再次监听 9000 端口".Log();
+                        listener.Start();
+                    }
+                    Work();
                 }
-                if (!listener.Server.IsBound)
+                catch (Exception e)
                 {
-                    listener.Start();
+                    e.ToString().Log();
                 }
-                Work();
             });
             ticker.Interval = 2000;
             ticker.Enabled = true;
@@ -72,7 +80,11 @@ namespace pws
         public void Stop()
         {
             ticker.Stop();
-            thread.Abort();
+            if (thread != null && thread.IsAlive)
+            {
+                thread.Abort();
+                thread = null;
+            }
             listener.Stop();
             foreach (PhpCgiServer server in servers)
             {
@@ -85,6 +97,7 @@ namespace pws
         {
             if (thread == null || !thread.IsAlive)
             {
+                "启动监听线程".Log();
                 thread = new Thread(() =>
                 {
                     try
@@ -111,7 +124,9 @@ namespace pws
                     }
                     finally
                     {
+                        "停止监听".Log();
                         listener.Stop();
+                        thread = null;
                     }
                 });
                 thread.Start();

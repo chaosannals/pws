@@ -61,6 +61,10 @@ namespace pws
                 {
                     transfer.Transfer();
                 }
+                catch (Exception e)
+                {
+                    e.ToString().Log();
+                }
                 finally
                 {
                     transfer.Source.Close();

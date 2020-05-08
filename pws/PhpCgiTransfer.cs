@@ -3,16 +3,22 @@ using System.Net.Sockets;
 
 namespace pws
 {
+    /// <summary>
+    /// 传输
+    /// </summary>
     public class PhpCgiTransfer
     {
         public TcpClient Source { get; set; }
         public TcpClient Target { get; set; }
 
+        /// <summary>
+        /// 传输
+        /// </summary>
         public void Transfer()
         {
             NetworkStream requester = Source.GetStream();
             NetworkStream responser = Target.GetStream();
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[8192];
             try
             {
                 while (true)
