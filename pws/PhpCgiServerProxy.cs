@@ -14,7 +14,7 @@ namespace pws
         private System.Timers.Timer ticker;
         private Thread thread;
         private TcpListener listener;
-        private PhpCgiServer[] servers;
+        private PhpCgiServerDispatcher dispatcher;
 
         /// <summary>
         /// 初始化代理
@@ -24,25 +24,13 @@ namespace pws
         {
             IPAddress address = IPAddress.Parse("0.0.0.0");
             listener = new TcpListener(address, port);
+            dispatcher = new PhpCgiServerDispatcher();
             thread = null;
             ticker = new System.Timers.Timer();
             ticker.Elapsed += new ElapsedEventHandler((sender, args) =>
             {
                 try
                 {
-                    foreach (PhpCgiServer server in servers)
-                    {
-                        if (server.Process.HasExited)
-                        {
-                            "重启 PHP CGI 服务 {0:D} 端口".Log(server.Port);
-                            server.Process.Start();
-                        }
-                    }
-                    if (!listener.Server.IsBound)
-                    {
-                        "再次监听 9000 端口".Log();
-                        listener.Start();
-                    }
                     Work();
                 }
                 catch (Exception e)
@@ -51,12 +39,6 @@ namespace pws
                 }
             });
             ticker.Interval = 2000;
-            ticker.Enabled = true;
-            servers = new PhpCgiServer[6];
-            for (short i = 0; i < servers.Length; ++i)
-            {
-                servers[i] = new PhpCgiServer((short)(i + 9001));
-            }
         }
 
         /// <summary>
@@ -64,13 +46,8 @@ namespace pws
         /// </summary>
         public void Start()
         {
-            foreach (PhpCgiServer server in servers)
-            {
-                server.Process.Start();
-                server.Process.BeginOutputReadLine();
-            }
             listener.Start();
-            Work();
+            ticker.Enabled = true; // 会调用一次 Elapsed 委托
             ticker.Start();
         }
 
@@ -86,11 +63,7 @@ namespace pws
                 thread = null;
             }
             listener.Stop();
-            foreach (PhpCgiServer server in servers)
-            {
-                server.Process.Kill();
-                server.Process.Close();
-            }
+            dispatcher.Stop();
         }
 
         public void Work()
@@ -107,15 +80,7 @@ namespace pws
                             TcpClient source = listener.AcceptTcpClient();
                             source.SendTimeout = 300000;
                             source.ReceiveTimeout = 300000;
-                            "开始请求".Log();
-                            // 根据 Counter 分发请求
-                            Array.Sort(servers, (a, b) =>
-                            {
-                                return a.Counter - b.Counter;
-                            });
-                            PhpCgiServer worker = servers[0];
-                            worker.Serve(source);
-                            "转发到 {0:D} 端口".Log(worker.Port);
+                            dispatcher.Dispatch(source);
                         }
                     }
                     catch (Exception e)
@@ -124,8 +89,7 @@ namespace pws
                     }
                     finally
                     {
-                        "停止监听".Log();
-                        listener.Stop();
+                        "线程关闭".Log();
                         thread = null;
                     }
                 });

@@ -12,6 +12,11 @@ namespace pws
         /// </summary>
         static void Main()
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                "捕获了漏掉的异常".Log();
+                e.ToString().Log();
+            };
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {

@@ -52,5 +52,14 @@ namespace pws
                 responser.Dispose();
             }
         }
+
+        /// <summary>
+        /// 关闭
+        /// </summary>
+        public void Close()
+        {
+            Target.Close();
+            Source.Close();
+        }
     }
 }

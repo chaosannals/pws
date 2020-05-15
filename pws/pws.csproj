@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="LogExtends.cs" />
     <Compile Include="PhpCgiServer.cs" />
+    <Compile Include="PhpCgiServerDispatcher.cs" />
     <Compile Include="PhpCgiServerProxy.cs" />
     <Compile Include="PhpCgiService.cs">
       <SubType>Component</SubType>
