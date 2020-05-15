@@ -15,7 +15,7 @@ namespace pws
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
             {
                 "捕获了漏掉的异常".Log();
-                e.ToString().Log();
+                e.ExceptionObject.ToString().Log();
             };
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]

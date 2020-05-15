@@ -13,8 +13,8 @@ namespace pws
     {
         private System.Timers.Timer ticker;
         private Thread thread;
-        private TcpListener listener;
         private PhpCgiServerDispatcher dispatcher;
+        public short Port { get; private set; }
 
         /// <summary>
         /// 初始化代理
@@ -22,12 +22,11 @@ namespace pws
         /// <param name="port"></param>
         public PhpCgiServerProxy(short port=9000)
         {
-            IPAddress address = IPAddress.Parse("0.0.0.0");
-            listener = new TcpListener(address, port);
+            Port = port;
             dispatcher = new PhpCgiServerDispatcher();
             thread = null;
             ticker = new System.Timers.Timer();
-            ticker.Elapsed += new ElapsedEventHandler((sender, args) =>
+            ticker.Elapsed += (sender, args) =>
             {
                 try
                 {
@@ -37,7 +36,7 @@ namespace pws
                 {
                     e.ToString().Log();
                 }
-            });
+            };
             ticker.Interval = 2000;
         }
 
@@ -46,7 +45,6 @@ namespace pws
         /// </summary>
         public void Start()
         {
-            listener.Start();
             ticker.Enabled = true; // 会调用一次 Elapsed 委托
             ticker.Start();
         }
@@ -62,7 +60,6 @@ namespace pws
                 thread.Abort();
                 thread = null;
             }
-            listener.Stop();
             dispatcher.Stop();
         }
 
@@ -73,14 +70,25 @@ namespace pws
                 "启动监听线程".Log();
                 thread = new Thread(() =>
                 {
+                    IPAddress address = IPAddress.Parse("0.0.0.0");
+                    TcpListener listener = new TcpListener(address, Port);
+                    ManualResetEvent manual = new ManualResetEvent(false);
+                    listener.Start();
                     try
                     {
                         while (true)
                         {
-                            TcpClient source = listener.AcceptTcpClient();
-                            source.SendTimeout = 300000;
-                            source.ReceiveTimeout = 300000;
-                            dispatcher.Dispatch(source);
+                            manual.Reset();
+                            listener.BeginAcceptTcpClient(ar =>
+                            {
+                                TcpListener owner = ar.AsyncState as TcpListener;
+                                TcpClient source = owner.EndAcceptTcpClient(ar);
+                                source.SendTimeout = 300000;
+                                source.ReceiveTimeout = 300000;
+                                manual.Set();
+                                dispatcher.Dispatch(source);
+                            }, listener);
+                            manual.WaitOne();
                         }
                     }
                     catch (Exception e)
@@ -90,6 +98,7 @@ namespace pws
                     finally
                     {
                         "线程关闭".Log();
+                        listener.Stop();
                         thread = null;
                     }
                 });
