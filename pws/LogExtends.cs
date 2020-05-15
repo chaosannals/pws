@@ -11,12 +11,13 @@ namespace pws
     /// </summary>
     public static class LogExtends
     {
+        private static volatile bool writing = false;
         private static string folder = null;
         private static Timer ticker = new Timer();
         private static List<string> contents = new List<string>();
 
         /// <summary>
-        /// 
+        /// 初始化写入计时器。
         /// </summary>
         static LogExtends()
         {
@@ -24,7 +25,7 @@ namespace pws
             {
                 try
                 {
-                    if (contents.Count > 0)
+                    if (!writing && contents.Count > 0)
                     {
                         Write();
                     }
@@ -77,16 +78,22 @@ namespace pws
             }
         }
 
+        /// <summary>
+        /// 写入文件。
+        /// </summary>
         private static void Write()
         {
-            // 日志路径
-            string path = Path.Combine(
-                Folder,
-                string.Format(
-                    "{0:S}.log",
-                    DateTime.Now.ToString("yyyyMMdd")
-                )
-            );
+            writing = true;
+            string date = DateTime.Now.ToString("yyyyMMdd");
+            string path = Path.Combine(Folder, string.Format("{0:S}.log", date));
+
+            // 大于 2M 的文件先搬移
+            FileInfo info = new FileInfo(path);
+            if (info.Length > 2000000)
+            {
+                string time = DateTime.Now.ToString("HHmmss");
+                info.MoveTo(Path.Combine(Folder, string.Format("{0:S}-{1:S}.log", date, time)));
+            }
 
             // 写入日志
             using (FileStream stream = File.Open(path, FileMode.OpenOrCreate | FileMode.Append))
@@ -101,6 +108,7 @@ namespace pws
                     contents.Clear();
                 }
             }
+            writing = false;
         }
     }
 }
