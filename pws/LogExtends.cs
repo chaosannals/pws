@@ -89,7 +89,7 @@ namespace pws
 
             // 大于 2M 的文件先搬移
             FileInfo info = new FileInfo(path);
-            if (info.Length > 2000000)
+            if (info.Exists && info.Length > 2000000)
             {
                 string time = DateTime.Now.ToString("HHmmss");
                 info.MoveTo(Path.Combine(Folder, string.Format("{0:S}-{1:S}.log", date, time)));
