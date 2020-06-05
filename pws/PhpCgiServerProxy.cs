@@ -13,7 +13,7 @@ namespace pws
     {
         private System.Timers.Timer ticker;
         private Thread thread;
-        private PhpCgiServerDispatcher dispatcher;
+        private PhpCgiProcessDispatcher dispatcher;
         public short Port { get; private set; }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace pws
         public PhpCgiServerProxy(short port=9000)
         {
             Port = port;
-            dispatcher = new PhpCgiServerDispatcher();
+            dispatcher = new PhpCgiProcessDispatcher();
             thread = null;
             ticker = new System.Timers.Timer();
             ticker.Elapsed += (sender, args) =>
