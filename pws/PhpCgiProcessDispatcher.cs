@@ -21,7 +21,7 @@ namespace Pws
                 {
                     lock (processes)
                     {
-                        PhpCgiProcess[] trash = processes.Where(p => p.IsReusable).ToArray();
+                        PhpCgiProcess[] trash = processes.Where(p => p.IsReusable && p.IdleRate > 0.99).ToArray();
                         processes = processes.Where(p => !trash.Contains(p)).ToList();
                         foreach (PhpCgiProcess process in trash)
                         {

@@ -15,6 +15,46 @@ namespace Pws
         public Process Process { get; private set; }
         public bool IsReusable { get; private set; }
 
+        public double LiveTime
+        {
+            get
+            {
+                return DateTime.Now.Subtract(Process.StartTime).TotalSeconds;
+            }
+        }
+
+        public double WorkTime
+        {
+            get
+            {
+                return Process.TotalProcessorTime.TotalSeconds;
+            }
+        }
+
+        public double WorkRate
+        {
+            get
+            {
+                return WorkRate / LiveTime;
+            }
+        }
+
+        public double IdleTime
+        {
+            get
+            {
+                return LiveTime - WorkTime;
+            }
+        }
+
+        public double IdleRate
+        {
+            get
+            {
+                return IdleTime / LiveTime;
+            }
+        }
+
         public PhpCgiProcess()
         {
             string here = AppDomain.CurrentDomain.BaseDirectory;
