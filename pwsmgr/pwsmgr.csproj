@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{13B764B7-7932-48E8-8AA9-A93A6093771E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>pwsmgr</RootNamespace>
+    <RootNamespace>PwsMgr</RootNamespace>
     <AssemblyName>pwsmgr</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

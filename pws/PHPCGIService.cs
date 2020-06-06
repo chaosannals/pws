@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceProcess;
 
-namespace pws
+namespace Pws
 {
     /// <summary>
     /// 服务

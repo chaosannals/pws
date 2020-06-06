@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Timers;
 
-namespace pws
+namespace Pws
 {
     public class PhpCgiProcessDispatcher
     {

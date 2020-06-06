@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pws", "pws\pws.csproj", "{D72E6269-A478-4C96-BCFE-8D3024A8BB66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pws", "pws\Pws.csproj", "{D72E6269-A478-4C96-BCFE-8D3024A8BB66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pwsmgr", "pwsmgr\pwsmgr.csproj", "{13B764B7-7932-48E8-8AA9-A93A6093771E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PwsMgr", "pwsmgr\PwsMgr.csproj", "{13B764B7-7932-48E8-8AA9-A93A6093771E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pwstest", "pwstest\pwstest.csproj", "{8DCA42DE-235B-46F7-87F6-40DF23E3F799}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PwsTest", "pwstest\PwsTest.csproj", "{8DCA42DE-235B-46F7-87F6-40DF23E3F799}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

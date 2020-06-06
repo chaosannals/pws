@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Timers;
 
-namespace pws
+namespace Pws
 {
     /// <summary>
     /// 日志扩展

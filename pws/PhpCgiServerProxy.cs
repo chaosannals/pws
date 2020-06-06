@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
 
-namespace pws
+namespace Pws
 {
     /// <summary>
     /// PHP CGI 反向代理

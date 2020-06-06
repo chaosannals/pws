@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 
-namespace pws
+namespace Pws
 {
     /// <summary>
     /// 传输

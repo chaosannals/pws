@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 
-namespace pws
+namespace Pws
 {
     public class PhpCgiServerDispatcher
     {

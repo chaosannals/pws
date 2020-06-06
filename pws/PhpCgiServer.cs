@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Net.Sockets;
 
-namespace pws
+namespace Pws
 {
     /// <summary>
     /// PHP CGI 服务器

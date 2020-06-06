@@ -1,4 +1,4 @@
-﻿namespace pws
+﻿namespace Pws
 {
     partial class PhpCgiService
     {

@@ -4,7 +4,7 @@ using System.ServiceProcess;
 using System.Configuration.Install;
 using System.IO;
 
-namespace pwsmgr
+namespace PwsMgr
 {
     class Program
     {

@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Linq;
 
-namespace pws
+namespace Pws
 {
     public class PhpCgiProcess
     {

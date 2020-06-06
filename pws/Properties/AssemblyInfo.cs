@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("pws")]
+[assembly: AssemblyTitle("Pws")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("微软中国")]
-[assembly: AssemblyProduct("pws")]
+[assembly: AssemblyProduct("Pws")]
 [assembly: AssemblyCopyright("Copyright © 微软中国 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
