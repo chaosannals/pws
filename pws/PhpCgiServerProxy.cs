@@ -63,6 +63,9 @@ namespace Pws
             dispatcher.Stop();
         }
 
+        /// <summary>
+        /// 代理分发请求
+        /// </summary>
         public void Work()
         {
             if (thread == null || !thread.IsAlive)
@@ -79,6 +82,7 @@ namespace Pws
                         while (true)
                         {
                             manual.Reset();
+                            DateTime start = DateTime.Now;
                             listener.BeginAcceptTcpClient(ar =>
                             {
                                 TcpListener owner = ar.AsyncState as TcpListener;
@@ -89,6 +93,8 @@ namespace Pws
                                 dispatcher.Dispatch(source);
                             }, listener);
                             manual.WaitOne();
+                            TimeSpan duration = DateTime.Now.Subtract(start);
+                            "分发请求耗时 {0:N} ms".Log(duration.TotalMilliseconds);
                         }
                     }
                     catch (Exception e)

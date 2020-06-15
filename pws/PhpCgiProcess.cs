@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace Pws
 {
+    /// <summary>
+    /// PHP-CGI 进程
+    /// </summary>
     public class PhpCgiProcess
     {
         public int Port { get; private set; }
@@ -19,7 +22,7 @@ namespace Pws
         {
             get
             {
-                return DateTime.Now.Subtract(Process.StartTime).TotalSeconds;
+                return DateTime.Now.Subtract(Process.StartTime).TotalMilliseconds;
             }
         }
 
@@ -27,7 +30,7 @@ namespace Pws
         {
             get
             {
-                return Process.TotalProcessorTime.TotalSeconds;
+                return Process.TotalProcessorTime.TotalMilliseconds;
             }
         }
 
@@ -52,6 +55,14 @@ namespace Pws
             get
             {
                 return IdleTime / LiveTime;
+            }
+        }
+
+        public bool IsRecyclable
+        {
+            get
+            {
+                return IsReusable && LiveTime > 100000 && IdleRate > 0.75;
             }
         }
 
@@ -87,12 +98,16 @@ namespace Pws
                 Process.StartInfo.Arguments = string.Format("-b {0:D}", Port);
                 Process.BeginOutputReadLine();
                 Process.Start();
+                "进程（{0:D}）重启".Log(Port);
             }
 
             IsReusable = false;
             TcpClient target = new TcpClient("127.0.0.1", Port);
             target.SendTimeout = 300000;
             target.ReceiveTimeout = 300000;
+            DateTime start = DateTime.Now;
+            Guid guid = Guid.NewGuid();
+            "进程（{0:D}）处理请求 {1}".Log(Port, guid);
 
             // 代理任务线程
             ThreadPool.QueueUserWorkItem(param =>
@@ -108,8 +123,10 @@ namespace Pws
                 }
                 finally
                 {
+                    TimeSpan duration = DateTime.Now.Subtract(start);
                     IsReusable = true;
                     transfer.Close();
+                    "进程（{0:D}）处理请求 {1} 耗时 {2:N} ms".Log(Port, guid, duration.TotalMilliseconds);
                 }
             }, new PhpCgiTransfer
             {
@@ -118,6 +135,9 @@ namespace Pws
             });
         }
 
+        /// <summary>
+        /// 停止进程。
+        /// </summary>
         public void Stop()
         {
             if (!Process.HasExited)
@@ -127,6 +147,10 @@ namespace Pws
             }
         }
 
+        /// <summary>
+        /// 找到可用的端口
+        /// </summary>
+        /// <returns></returns>
         public static int FindUsablePort()
         {
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();

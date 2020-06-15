@@ -21,7 +21,7 @@ namespace Pws
                 {
                     lock (processes)
                     {
-                        PhpCgiProcess[] trash = processes.Where(p => p.IsReusable && p.IdleRate > 0.99).ToArray();
+                        PhpCgiProcess[] trash = processes.Where(p => p.IsRecyclable).ToArray();
                         processes = processes.Where(p => !trash.Contains(p)).ToList();
                         foreach (PhpCgiProcess process in trash)
                         {
@@ -37,6 +37,10 @@ namespace Pws
             ticker.Interval = 10000;
         }
 
+        /// <summary>
+        /// 调度请求。
+        /// </summary>
+        /// <param name="source"></param>
         public void Dispatch(TcpClient source)
         {
             if (!ticker.Enabled)
@@ -63,6 +67,9 @@ namespace Pws
             worker.Start(source);
         }
 
+        /// <summary>
+        /// 停止所有的CGI服务。
+        /// </summary>
         public void Stop()
         {
             lock(processes)
