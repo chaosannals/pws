@@ -68,7 +68,7 @@ namespace Pws
         public static void Log(this string content, params object[] args)
         {
             string text = string.Format(
-                "[{0:S}]\r\n{1:S}\r\n",
+                "[{0:S}] - {1:S}\r\n",
                 DateTime.Now.ToString("F"),
                 string.Format(content, args)
             );
@@ -81,7 +81,7 @@ namespace Pws
         /// <summary>
         /// 写入文件。
         /// </summary>
-        private static void Write()
+        public static void Write()
         {
             writing = true;
             string date = DateTime.Now.ToString("yyyyMMdd");

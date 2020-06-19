@@ -12,8 +12,9 @@ namespace Pws
     public class PhpCgiServerProxy
     {
         private System.Timers.Timer ticker;
-        private Thread thread;
+        private volatile Thread thread;
         private PhpCgiProcessDispatcher dispatcher;
+        private ManualResetEvent manual;
         public short Port { get; private set; }
 
         /// <summary>
@@ -25,6 +26,7 @@ namespace Pws
             Port = port;
             dispatcher = new PhpCgiProcessDispatcher();
             thread = null;
+            manual = new ManualResetEvent(false);
             ticker = new System.Timers.Timer();
             ticker.Elapsed += (sender, args) =>
             {
@@ -57,8 +59,8 @@ namespace Pws
             ticker.Stop();
             if (thread != null && thread.IsAlive)
             {
-                thread.Abort();
                 thread = null;
+                manual.Set();
             }
             dispatcher.Stop();
         }
@@ -75,11 +77,10 @@ namespace Pws
                 {
                     IPAddress address = IPAddress.Parse("0.0.0.0");
                     TcpListener listener = new TcpListener(address, Port);
-                    ManualResetEvent manual = new ManualResetEvent(false);
-                    listener.Start();
                     try
                     {
-                        while (true)
+                        listener.Start();
+                        while (thread != null)
                         {
                             manual.Reset();
                             DateTime start = DateTime.Now;

@@ -47,9 +47,10 @@ namespace Pws
             {
                 ticker.Start();
             }
-            PhpCgiProcess worker = null;
+
             lock (processes)
             {
+                PhpCgiProcess worker = null;
                 foreach (PhpCgiProcess process in processes)
                 {
                     if (process.IsReusable)
@@ -63,8 +64,8 @@ namespace Pws
                     worker = new PhpCgiProcess();
                     processes.Add(worker);
                 }
+                worker.Start(source);
             }
-            worker.Start(source);
         }
 
         /// <summary>

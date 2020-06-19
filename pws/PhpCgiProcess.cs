@@ -103,8 +103,8 @@ namespace Pws
 
             IsReusable = false;
             TcpClient target = new TcpClient("127.0.0.1", Port);
-            target.SendTimeout = 300000;
-            target.ReceiveTimeout = 300000;
+            target.SendTimeout = 30000;
+            target.ReceiveTimeout = 30000;
             DateTime start = DateTime.Now;
             Guid guid = Guid.NewGuid();
             "进程（{0:D}）处理请求 {1}".Log(Port, guid);

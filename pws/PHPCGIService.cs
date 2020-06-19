@@ -15,7 +15,7 @@ namespace Pws
         /// </summary>
         public PhpCgiService()
         {
-            "PHP-CGI Server Initialize".Log();
+            "PHP-CGI Server Initialize =======================================*".Log();
             proxy = new PhpCgiServerProxy();
         }
 
@@ -27,7 +27,7 @@ namespace Pws
         {
             try
             {
-                "PHP-CGI Start".Log();
+                "PHP-CGI Start =======================================+".Log();
                 proxy.Start();
             }
             catch (Exception e)
@@ -44,7 +44,7 @@ namespace Pws
             try
             {
                 proxy.Stop();
-                "PHP-CGI Stop".Log();
+                "PHP-CGI Stop =======================================-".Log();
             }
             catch (Exception e)
             {
