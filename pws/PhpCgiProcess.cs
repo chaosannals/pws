@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -16,7 +15,7 @@ namespace Pws
     {
         public int Port { get; private set; }
         public Process Process { get; private set; }
-        public bool IsReusable { get; private set; }
+        public volatile bool IsReusable = false;
 
         public double LiveTime
         {
@@ -66,10 +65,10 @@ namespace Pws
             }
         }
 
-        public PhpCgiProcess()
+        public PhpCgiProcess(int port)
         {
             string here = AppDomain.CurrentDomain.BaseDirectory;
-            Port = FindUsablePort();
+            Port = port;
             Process = new Process();
             Process.StartInfo.FileName = Path.Combine(here, "php-cgi.exe");
             Process.StartInfo.Arguments = string.Format("-b {0:D}", Port);
@@ -90,11 +89,17 @@ namespace Pws
             Process.Start();
         }
 
+        /// <summary>
+        /// 开始处理。
+        /// </summary>
+        /// <param name="source"></param>
         public void Start(TcpClient source)
         {
+            DateTime start = DateTime.Now;
+            Guid guid = Guid.NewGuid();
+
             if (Process.HasExited)
             {
-                Port = FindUsablePort();
                 Process.StartInfo.Arguments = string.Format("-b {0:D}", Port);
                 Process.BeginOutputReadLine();
                 Process.Start();
@@ -105,34 +110,29 @@ namespace Pws
             TcpClient target = new TcpClient("127.0.0.1", Port);
             target.SendTimeout = 30000;
             target.ReceiveTimeout = 30000;
-            DateTime start = DateTime.Now;
-            Guid guid = Guid.NewGuid();
             "进程（{0:D}）处理请求 {1}".Log(Port, guid);
 
-            // 代理任务线程
-            ThreadPool.QueueUserWorkItem(param =>
-            {
-                PhpCgiTransfer transfer = param as PhpCgiTransfer;
-                try
-                {
-                    transfer.Transfer();
-                }
-                catch (Exception e)
-                {
-                    e.ToString().Log();
-                }
-                finally
-                {
-                    TimeSpan duration = DateTime.Now.Subtract(start);
-                    IsReusable = true;
-                    transfer.Close();
-                    "进程（{0:D}）处理请求 {1} 耗时 {2:N} ms".Log(Port, guid, duration.TotalMilliseconds);
-                }
-            }, new PhpCgiTransfer
+            // 传输
+            PhpCgiTransfer transfer = new PhpCgiTransfer
             {
                 Source = source,
                 Target = target,
-            });
+            };
+            try
+            {
+                transfer.Transfer();
+            }
+            catch (Exception e)
+            {
+                e.ToString().Log();
+            }
+            finally
+            {
+                TimeSpan duration = DateTime.Now.Subtract(start);
+                IsReusable = true;
+                transfer.Close();
+                "进程（{0:D}）处理请求 {1} 耗时 {2:N} ms".Log(Port, guid, duration.TotalMilliseconds);
+            }
         }
 
         /// <summary>
@@ -145,28 +145,6 @@ namespace Pws
                 Process.Kill();
                 Process.Close();
             }
-        }
-
-        /// <summary>
-        /// 找到可用的端口
-        /// </summary>
-        /// <returns></returns>
-        public static int FindUsablePort()
-        {
-            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
-            IPEndPoint[] tcpEndPoints = ipProperties.GetActiveTcpListeners();
-            int[] ports = tcpEndPoints.Select(p => p.Port).Where(p => p > 9000).ToArray();
-            Array.Sort(ports);
-            for (int i = 0; i < ports.Length; ++i)
-            {
-                int port = ports[i];
-                int result = port + 1;
-                if (result < ports[i + 1])
-                {
-                    return result;
-                }
-            }
-            return 0;
         }
     }
 }

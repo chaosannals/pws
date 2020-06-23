@@ -19,6 +19,7 @@ namespace Pws
             NetworkStream requester = Source.GetStream();
             NetworkStream responser = Target.GetStream();
             byte[] buffer = new byte[8192];
+            DateTime begin = DateTime.Now;
             try
             {
                 while (true)
@@ -26,13 +27,17 @@ namespace Pws
                     // 转发请求信息。
                     if (requester.DataAvailable)
                     {
+                        DateTime start = DateTime.Now;
                         int count = requester.Read(buffer, 0, buffer.Length);
                         responser.Write(buffer, 0, count);
+                        TimeSpan d = DateTime.Now.Subtract(start);
+                        "转发请求 {0:N} ms".Log(d.TotalMilliseconds);
                     }
 
                     // 接收响应内容。
                     if (responser.DataAvailable)
                     {
+                        DateTime start = DateTime.Now;
                         int count = responser.Read(buffer, 0, buffer.Length);
                         requester.Write(buffer, 0, count);
                         // 一旦开始接收就直到结束为止。
@@ -41,12 +46,16 @@ namespace Pws
                             count = responser.Read(buffer, 0, buffer.Length);
                             requester.Write(buffer, 0, count);
                         }
+                        TimeSpan d = DateTime.Now.Subtract(start);
+                        "转发响应 {0:N} ms".Log(d.TotalMilliseconds);
                         break; // 响应内容接收完毕，退出。
                     }
                 }
             }
             finally
             {
+                TimeSpan d = DateTime.Now.Subtract(begin);
+                "转发耗时 {0:N} ms".Log(d.TotalMilliseconds);
                 // 结束时回收资源。
                 requester.Dispose();
                 responser.Dispose();

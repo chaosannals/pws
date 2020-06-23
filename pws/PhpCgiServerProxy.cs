@@ -90,8 +90,14 @@ namespace Pws
                                 TcpClient source = owner.EndAcceptTcpClient(ar);
                                 source.SendTimeout = 300000;
                                 source.ReceiveTimeout = 300000;
+                                PhpCgiProcess worker = dispatcher.Dispatch(source);
+                                TimeSpan d = DateTime.Now.Subtract(start);
+                                "分发解锁 {0:N} ms".Log(d.TotalMilliseconds);
                                 manual.Set();
-                                dispatcher.Dispatch(source);
+                                ThreadPool.QueueUserWorkItem(e =>
+                                {
+                                    worker.Start(source);
+                                });
                             }, listener);
                             manual.WaitOne();
                             TimeSpan duration = DateTime.Now.Subtract(start);

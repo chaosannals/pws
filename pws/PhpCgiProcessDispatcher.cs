@@ -2,24 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using System.Timers;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace Pws
 {
     public class PhpCgiProcessDispatcher
     {
-        private Timer ticker;
-        private List<PhpCgiProcess> processes;
+        private System.Timers.Timer ticker;
+        private volatile object locking = new object();
+        private volatile List<PhpCgiProcess> processes;
+        private List<int> Ports { get { return processes.Select(p => p.Port).ToList<int>(); } }
 
         public PhpCgiProcessDispatcher()
         {
             processes = new List<PhpCgiProcess>();
-            ticker = new Timer();
+            ticker = new System.Timers.Timer();
             ticker.Elapsed += (sender, args) =>
             {
                 try
                 {
-                    lock (processes)
+                    lock (locking)
                     {
                         PhpCgiProcess[] trash = processes.Where(p => p.IsRecyclable).ToArray();
                         processes = processes.Where(p => !trash.Contains(p)).ToList();
@@ -41,30 +44,37 @@ namespace Pws
         /// 调度请求。
         /// </summary>
         /// <param name="source"></param>
-        public void Dispatch(TcpClient source)
+        public PhpCgiProcess Dispatch(TcpClient source)
         {
             if (!ticker.Enabled)
             {
                 ticker.Start();
             }
 
-            lock (processes)
+            lock (locking)
             {
                 PhpCgiProcess worker = null;
+                DateTime start = DateTime.Now;
+                "当前进程数 {0:D}".Log(processes.Count);
                 foreach (PhpCgiProcess process in processes)
                 {
                     if (process.IsReusable)
                     {
+                        "进程 {0:D} 接受调度".Log(process.Port);
                         worker = process;
+                        process.IsReusable = false;
                         break;
                     }
                 }
                 if (worker == null)
                 {
-                    worker = new PhpCgiProcess();
+                    worker = new PhpCgiProcess(FindUsablePort());
                     processes.Add(worker);
+                    "新进程 {0:D} 接受调度".Log(worker.Port);
                 }
-                worker.Start(source);
+                TimeSpan d = DateTime.Now.Subtract(start);
+                "调度 {0:D} 锁耗时 {1:N} ms".Log(worker.Port, d.TotalMilliseconds);
+                return worker;
             }
         }
 
@@ -73,13 +83,40 @@ namespace Pws
         /// </summary>
         public void Stop()
         {
-            lock(processes)
+            lock(locking)
             {
                 foreach(PhpCgiProcess process in processes)
                 {
                     process.Stop();
                 }
             }
+        }
+
+        /// <summary>
+        /// 找到可用的端口
+        /// </summary>
+        /// <returns></returns>
+        public int FindUsablePort()
+        {
+            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] tcpEndPoints = ipProperties.GetActiveTcpListeners();
+            List<int> ports = tcpEndPoints.Select(p => p.Port).Where(p => p > 9000).ToList<int>();
+            ports.AddRange(Ports);
+            ports.Sort();
+            int result = 9001;
+            int i = 0;
+            while (i < ports.Count && result < 60000)
+            {
+                if (result == ports[i])
+                {
+                    ++result;
+                    ++i;
+                } else
+                {
+                    return result;
+                }
+            }
+            return 0;
         }
     }
 }
