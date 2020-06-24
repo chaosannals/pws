@@ -96,7 +96,13 @@ namespace Pws
                                 manual.Set();
                                 ThreadPool.QueueUserWorkItem(e =>
                                 {
-                                    worker.Start(source);
+                                    try
+                                    {
+                                        worker.Start(source);
+                                    } catch (Exception exception)
+                                    {
+                                        exception.Message.Log();
+                                    }
                                 });
                             }, listener);
                             manual.WaitOne();
