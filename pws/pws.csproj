@@ -41,6 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FastCgiBeginRequestBody.cs" />
+    <Compile Include="FastCgiEndRequestBody.cs" />
+    <Compile Include="FastCgiFlag.cs" />
+    <Compile Include="FastCgiHeader.cs" />
+    <Compile Include="FastCgiRole.cs" />
+    <Compile Include="FastCgiStatus.cs" />
+    <Compile Include="FastCgiType.cs" />
     <Compile Include="LogExtends.cs" />
     <Compile Include="PhpCgiProcess.cs" />
     <Compile Include="PhpCgiProcessDispatcher.cs" />
