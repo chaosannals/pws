@@ -45,6 +45,8 @@
     <Compile Include="FastCgiEndRequestBody.cs" />
     <Compile Include="FastCgiFlag.cs" />
     <Compile Include="FastCgiHeader.cs" />
+    <Compile Include="FastCgiMessage.cs" />
+    <Compile Include="FastCgiMessager.cs" />
     <Compile Include="FastCgiRole.cs" />
     <Compile Include="FastCgiStatus.cs" />
     <Compile Include="FastCgiType.cs" />

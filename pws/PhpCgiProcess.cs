@@ -125,7 +125,7 @@ namespace Pws
             catch (Exception e)
             {
                 e.ToString().Log();
-                Process.Close();
+                Stop();
             }
             finally
             {
