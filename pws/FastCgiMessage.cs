@@ -34,7 +34,14 @@ namespace Pws
 
         public override string ToString()
         {
-            return base.ToString();// todo
+            StringBuilder builder = new StringBuilder();
+            builder.Append("ID: ");
+            builder.Append(Header.RequestId.ToString());
+            builder.Append(" Length: ");
+            builder.Append(Header.ContentLength.ToString());
+            builder.Append(" Type: ");
+            builder.Append(Header.Type.ToString());
+            return builder.ToString();
         }
     }
 }

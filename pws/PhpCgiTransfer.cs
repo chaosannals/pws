@@ -20,6 +20,7 @@ namespace Pws
             NetworkStream responser = Target.GetStream();
             byte[] buffer = new byte[8192];
             DateTime begin = DateTime.Now;
+            FastCgiMessager fcm = new FastCgiMessager();
             try
             {
                 while (true)
@@ -30,8 +31,14 @@ namespace Pws
                         DateTime start = DateTime.Now;
                         int count = requester.Read(buffer, 0, buffer.Length);
                         responser.Write(buffer, 0, count);
+                        fcm.Gain(buffer, count);
+                        while (true)
+                        {
+                            FastCgiMessage m = fcm.Pop();
+                            if (m == null) break;
+                            m.ToString().Log();
+                        }
                         TimeSpan d = DateTime.Now.Subtract(start);
-                        "转发请求 {0:N} ms".Log(d.TotalMilliseconds);
                     }
 
                     // 接收响应内容。
@@ -47,7 +54,6 @@ namespace Pws
                             requester.Write(buffer, 0, count);
                         }
                         TimeSpan d = DateTime.Now.Subtract(start);
-                        "转发响应 {0:N} ms".Log(d.TotalMilliseconds);
                         break; // 响应内容接收完毕，退出。
                     }
                 }

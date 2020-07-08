@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Linq;
+using System.CodeDom;
 
 namespace Pws
 {
@@ -141,10 +142,18 @@ namespace Pws
         /// </summary>
         public void Stop()
         {
-            if (!Process.HasExited)
+            try
             {
-                Process.Kill();
-                Process.Close();
+                if (!Process.HasExited)
+                {
+                    Process.Kill();
+                    Process.Close();
+                }
+                IsReusable = true;
+            }
+            catch (InvalidOperationException e)
+            {
+                e.Message.Log();
             }
         }
     }
