@@ -14,6 +14,8 @@ namespace Pws
     /// </summary>
     public class PhpCgiProcess
     {
+        public static string Here { get { return AppDomain.CurrentDomain.BaseDirectory; } }
+
         public int Port { get; private set; }
         public Process Process { get; private set; }
         public volatile bool IsReusable = false;
@@ -62,18 +64,19 @@ namespace Pws
         {
             get
             {
-                return IsReusable && LiveTime > 100000 && IdleRate > 0.75;
+                return IsReusable && 
+
+                    (LiveTime > 100000 && IdleRate > 0.75);
             }
         }
 
         public PhpCgiProcess(int port)
         {
-            string here = AppDomain.CurrentDomain.BaseDirectory;
             Port = port;
             Process = new Process();
-            Process.StartInfo.FileName = Path.Combine(here, "php-cgi.exe");
+            Process.StartInfo.FileName = Path.Combine(Here, "php-cgi.exe");
             Process.StartInfo.Arguments = string.Format("-b {0:D}", Port);
-            Process.StartInfo.WorkingDirectory = here;
+            Process.StartInfo.WorkingDirectory = Here;
             Process.StartInfo.CreateNoWindow = true;
             Process.StartInfo.UseShellExecute = false;
             Process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

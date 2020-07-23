@@ -20,10 +20,12 @@ namespace Pws
             NetworkStream responser = Target.GetStream();
             byte[] buffer = new byte[8192];
             DateTime begin = DateTime.Now;
-            FastCgiMessager fcm = new FastCgiMessager();
+            FastCgiMessager fcms = new FastCgiMessager();
+            FastCgiMessager fcmt = new FastCgiMessager();
             try
             {
-                while (true)
+                bool able = true;
+                while (able)
                 {
                     // 转发请求信息。
                     if (requester.DataAvailable)
@@ -31,11 +33,15 @@ namespace Pws
                         DateTime start = DateTime.Now;
                         int count = requester.Read(buffer, 0, buffer.Length);
                         responser.Write(buffer, 0, count);
-                        fcm.Gain(buffer, count);
+                        fcms.Gain(buffer, count);
                         while (true)
                         {
-                            FastCgiMessage m = fcm.Pop();
+                            FastCgiMessage m = fcms.Pop();
                             if (m == null) break;
+                            if (m.Header.Type == FastCgiType.AbortRequest)
+                            {
+                                able = false;
+                            }
                             m.ToString().Log();
                         }
                         TimeSpan d = DateTime.Now.Subtract(start);
@@ -47,12 +53,27 @@ namespace Pws
                         DateTime start = DateTime.Now;
                         int count = responser.Read(buffer, 0, buffer.Length);
                         requester.Write(buffer, 0, count);
+                        fcmt.Gain(buffer, count);
                         // 一旦开始接收就直到结束为止。
                         while (count > 0)
                         {
                             count = responser.Read(buffer, 0, buffer.Length);
                             requester.Write(buffer, 0, count);
+                            fcmt.Gain(buffer, count);
                         }
+
+                        // 分析 FastCGI
+                        while (true)
+                        {
+                            FastCgiMessage m = fcmt.Pop();
+                            if (m == null) break;
+                            if (m.Header.Type == FastCgiType.EndRequest)
+                            {
+                                able = false;
+                            }
+                            m.ToString().Log();
+                        }
+
                         TimeSpan d = DateTime.Now.Subtract(start);
                         break; // 响应内容接收完毕，退出。
                     }

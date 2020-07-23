@@ -43,13 +43,12 @@
   <ItemGroup>
     <Compile Include="FastCgiBeginRequestBody.cs" />
     <Compile Include="FastCgiEndRequestBody.cs" />
-    <Compile Include="FastCgiFlag.cs" />
+    <Compile Include="FastCgi.cs" />
     <Compile Include="FastCgiHeader.cs" />
     <Compile Include="FastCgiMessage.cs" />
     <Compile Include="FastCgiMessager.cs" />
-    <Compile Include="FastCgiRole.cs" />
-    <Compile Include="FastCgiStatus.cs" />
-    <Compile Include="FastCgiType.cs" />
+    <Compile Include="FastCgiPhpDispatcher.cs" />
+    <Compile Include="FastCgiPhpProxy.cs" />
     <Compile Include="LogExtends.cs" />
     <Compile Include="PhpCgiProcess.cs" />
     <Compile Include="PhpCgiProcessDispatcher.cs" />
@@ -61,6 +60,8 @@
       <DependentUpon>PhpCgiService.cs</DependentUpon>
     </Compile>
     <Compile Include="PhpCgiTransfer.cs" />
+    <Compile Include="FastCgiPhpProcess.cs" />
+    <Compile Include="FastCgiPhpRequester.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

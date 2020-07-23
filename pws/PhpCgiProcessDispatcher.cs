@@ -44,7 +44,7 @@ namespace Pws
         /// 调度请求。
         /// </summary>
         /// <param name="source"></param>
-        public PhpCgiProcess Dispatch(TcpClient source)
+        public PhpCgiProcess Dispatch()
         {
             if (!ticker.Enabled)
             {
