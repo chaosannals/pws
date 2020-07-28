@@ -39,7 +39,7 @@ namespace Pws
             // 获取请求内容
             if (
                 header != null &&
-                stream.Length >= (8 + header.ContentLength)
+                stream.Length >= header.MessageLength
             )
             {
                 byte[] body = new byte[header.ContentLength];
