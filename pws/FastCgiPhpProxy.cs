@@ -8,6 +8,9 @@ using System.Threading;
 
 namespace Pws
 {
+    /// <summary>
+    /// 代理
+    /// </summary>
     public class FastCgiPhpProxy
     {
         public volatile bool able;

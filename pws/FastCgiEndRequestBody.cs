@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Pws
 {
+    /// <summary>
+    /// 请求结束内容
+    /// </summary>
     public class FastCgiEndRequestBody
     {
         public byte ReservedB2;

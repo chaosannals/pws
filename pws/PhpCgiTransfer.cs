@@ -20,8 +20,8 @@ namespace Pws
             NetworkStream responser = Target.GetStream();
             byte[] buffer = new byte[8192];
             DateTime begin = DateTime.Now;
-            FastCgiMessager fcms = new FastCgiMessager();
-            FastCgiMessager fcmt = new FastCgiMessager();
+            FastCgiParser fcms = new FastCgiParser();
+            FastCgiParser fcmt = new FastCgiParser();
             try
             {
                 bool able = true;

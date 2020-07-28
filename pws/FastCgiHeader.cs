@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Pws
 {
+    /// <summary>
+    /// 请求头
+    /// </summary>
     public class FastCgiHeader
     {
         public byte Version { get; private set; }

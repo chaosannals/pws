@@ -23,11 +23,17 @@ namespace Pws
         UnknownType = 11,
     }
 
+    /// <summary>
+    /// 请求标识
+    /// </summary>
     public enum FastCgiFlag
     {
-        KeepConnection = 1,
+        KeepConnection = 1,//保持链接
     }
 
+    /// <summary>
+    /// 请求角色
+    /// </summary>
     public enum FastCgiRole
     {
         Responder = 1,
@@ -35,6 +41,9 @@ namespace Pws
         Filter = 3,
     }
 
+    /// <summary>
+    /// 协议状态
+    /// </summary>
     public enum FastCgiProtocolStatus
     {
         RequestComplete = 0,

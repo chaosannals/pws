@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Pws
 {
+    /// <summary>
+    /// 请求信息
+    /// </summary>
     public class FastCgiMessage
     {
         public FastCgiHeader Header;

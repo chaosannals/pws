@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Pws
 {
+    /// <summary>
+    /// 请求开始信息内容
+    /// </summary>
     public class FastCgiBeginRequestBody
     {
         public byte ReservedB4;
