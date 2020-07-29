@@ -47,10 +47,10 @@ namespace Pws
                 stream.Read(body, 0, header.ContentLength);
                 FastCgiMessage message = new FastCgiMessage(header, body);
                 MemoryStream one = new MemoryStream();
-                int length = (int)stream.Length - header.ContentLength - 8;
+                int length = (int)stream.Length - header.MessageLength;
                 if (length > 0)
                 {
-                    one.Write(stream.GetBuffer(), 8 + header.ContentLength, length);
+                    one.Write(stream.GetBuffer(), header.MessageLength, length);
                 }
                 stream = one;
                 header = null;
