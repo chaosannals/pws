@@ -33,7 +33,6 @@ namespace Pws
                 stream.Read(buffer, 0, 8);
                 stream.Seek(0, SeekOrigin.End);
                 header = new FastCgiHeader(buffer);
-                "ID {0} 流长 {1} 容长 {2}".Log(header.RequestId, stream.Length, header.ContentLength);
             }
 
             // 获取请求内容
