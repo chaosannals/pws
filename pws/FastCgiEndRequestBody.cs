@@ -25,5 +25,19 @@ namespace Pws
             ReservedB1 = data[6];
             ReservedB0 = data[7];
         }
+
+        /// <summary>
+        /// 格式化
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append("AppStatus: ");
+            builder.Append(AppStatus.ToString());
+            builder.Append(" ProtocolStatus: ");
+            builder.Append(ProtocolStatus.ToString());
+            return builder.ToString();
+        }
     }
 }

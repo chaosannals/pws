@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Pws
 {
@@ -25,7 +26,7 @@ namespace Pws
             try
             {
                 bool able = true;
-                while (able)
+                while (Volatile.Read(ref able))
                 {
                     // 转发请求信息。
                     if (requester.DataAvailable)
@@ -40,11 +41,18 @@ namespace Pws
                             if (m == null) break;
                             if (m.Header.Type == FastCgiType.AbortRequest)
                             {
-                                able = false;
+                                Volatile.Write(ref able, false);
                             }
-                            m.ToString().Log();
+                            if (m.Header.Type == FastCgiType.BeginRequest)
+                            {
+                                FastCgiBeginRequestBody body = m.AsBeginBody();
+                                "{0} => {1}".Log(m, body);
+                            }
+                            else
+                            {
+                                m.ToString().Log();
+                            }
                         }
-                        TimeSpan d = DateTime.Now.Subtract(start);
                     }
 
                     // 接收响应内容。
@@ -54,13 +62,6 @@ namespace Pws
                         int count = responser.Read(buffer, 0, buffer.Length);
                         requester.Write(buffer, 0, count);
                         fcmt.Gain(buffer, count);
-                        // 一旦开始接收就直到结束为止。
-                        while (count > 0)
-                        {
-                            count = responser.Read(buffer, 0, buffer.Length);
-                            requester.Write(buffer, 0, count);
-                            fcmt.Gain(buffer, count);
-                        }
 
                         // 分析 FastCGI
                         while (true)
@@ -69,13 +70,14 @@ namespace Pws
                             if (m == null) break;
                             if (m.Header.Type == FastCgiType.EndRequest)
                             {
-                                able = false;
+                                Volatile.Write(ref able, false);
+                                FastCgiEndRequestBody body = m.AsEndBody();
+                                "{0} => {1}".Log(m, body);
+                            } else
+                            {
+                                m.ToString().Log();
                             }
-                            m.ToString().Log();
                         }
-
-                        TimeSpan d = DateTime.Now.Subtract(start);
-                        break; // 响应内容接收完毕，退出。
                     }
                 }
             }
