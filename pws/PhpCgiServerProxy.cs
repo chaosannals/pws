@@ -14,7 +14,6 @@ namespace Pws
         private System.Timers.Timer ticker;
         private volatile Thread thread;
         private PhpCgiProcessDispatcher dispatcher;
-        private ManualResetEvent manual;
         public short Port { get; private set; }
 
         /// <summary>
@@ -26,7 +25,6 @@ namespace Pws
             Port = port;
             dispatcher = new PhpCgiProcessDispatcher();
             thread = null;
-            manual = new ManualResetEvent(false);
             ticker = new System.Timers.Timer();
             ticker.Elapsed += (sender, args) =>
             {
@@ -60,7 +58,6 @@ namespace Pws
             if (thread != null && thread.IsAlive)
             {
                 thread = null;
-                manual.Set();
             }
             dispatcher.Stop();
         }
@@ -82,30 +79,24 @@ namespace Pws
                         listener.Start();
                         while (thread != null)
                         {
-                            manual.Reset();
                             DateTime start = DateTime.Now;
-                            listener.BeginAcceptTcpClient(ar =>
+                            TcpClient source = listener.AcceptTcpClient();
+                            source.SendTimeout = 300000;
+                            source.ReceiveTimeout = 300000;
+                            PhpCgiProcess worker = dispatcher.Dispatch();
+                            TimeSpan d = DateTime.Now.Subtract(start);
+                            "分发解锁 {0:N} ms".Log(d.TotalMilliseconds);
+                            ThreadPool.QueueUserWorkItem(e =>
                             {
-                                TcpListener owner = ar.AsyncState as TcpListener;
-                                TcpClient source = owner.EndAcceptTcpClient(ar);
-                                source.SendTimeout = 300000;
-                                source.ReceiveTimeout = 300000;
-                                PhpCgiProcess worker = dispatcher.Dispatch();
-                                TimeSpan d = DateTime.Now.Subtract(start);
-                                "分发解锁 {0:N} ms".Log(d.TotalMilliseconds);
-                                manual.Set();
-                                ThreadPool.QueueUserWorkItem(e =>
+                                try
                                 {
-                                    try
-                                    {
-                                        worker.Start(source);
-                                    } catch (Exception exception)
-                                    {
-                                        exception.Message.Log();
-                                    }
-                                });
-                            }, listener);
-                            manual.WaitOne();
+                                    worker.Start(source);
+                                }
+                                catch (Exception exception)
+                                {
+                                    exception.Message.Log();
+                                }
+                            });
                             TimeSpan duration = DateTime.Now.Subtract(start);
                             "分发请求耗时 {0:N} ms".Log(duration.TotalMilliseconds);
                         }
