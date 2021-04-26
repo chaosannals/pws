@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PwsMgr", "pwsmgr\PwsMgr.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PwsTest", "pwstest\PwsTest.csproj", "{8DCA42DE-235B-46F7-87F6-40DF23E3F799}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PwsSetup", "pwssetup\PwsSetup.vdproj", "{A59F8D45-E548-452D-B5AF-CDBC7F349CE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,8 @@ Global
 		{8DCA42DE-235B-46F7-87F6-40DF23E3F799}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DCA42DE-235B-46F7-87F6-40DF23E3F799}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DCA42DE-235B-46F7-87F6-40DF23E3F799}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A59F8D45-E548-452D-B5AF-CDBC7F349CE0}.Debug|Any CPU.ActiveCfg = Debug
+		{A59F8D45-E548-452D-B5AF-CDBC7F349CE0}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
