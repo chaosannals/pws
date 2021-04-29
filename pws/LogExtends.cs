@@ -11,7 +11,6 @@ namespace Pws
     /// </summary>
     public static class LogExtends
     {
-        private static volatile bool writing = false;
         private static string folder = null;
         private static Timer ticker = new Timer();
         private static List<string> contents = new List<string>();
@@ -25,14 +24,17 @@ namespace Pws
             {
                 try
                 {
-                    if (!writing && contents.Count > 0)
+                    lock (contents)
                     {
-                        Write();
+                        if (contents.Count > 0)
+                        {
+                            Write();
+                        }
                     }
                 }
                 catch (Exception e)
                 {
-                    e.ToString().Log();
+                    // 
                 }
             };
             ticker.Interval = 2000;
@@ -50,7 +52,7 @@ namespace Pws
                 {
                     folder = Path.Combine(
                         AppDomain.CurrentDomain.BaseDirectory,
-                        "pwslog"
+                        "log"
                     );
                     if (!Directory.Exists(folder))
                     {
@@ -58,6 +60,18 @@ namespace Pws
                     }
                 }
                 return folder;
+            }
+        }
+
+        public static void Finally()
+        {
+            ticker.Stop();
+            lock (contents)
+            {
+                if (contents.Count > 0)
+                {
+                    Write();
+                }
             }
         }
 
@@ -81,9 +95,8 @@ namespace Pws
         /// <summary>
         /// 写入文件。
         /// </summary>
-        public static void Write()
+        private static void Write()
         {
-            writing = true;
             string date = DateTime.Now.ToString("yyyyMMdd");
             string path = Path.Combine(Folder, string.Format("{0:S}.log", date));
 
@@ -98,17 +111,13 @@ namespace Pws
             // 写入日志
             using (FileStream stream = File.Open(path, FileMode.OpenOrCreate | FileMode.Append))
             {
-                lock(contents)
+                foreach(string text in contents)
                 {
-                    foreach(string text in contents)
-                    {
-                        byte[] data = Encoding.UTF8.GetBytes(text);
-                        stream.Write(data, 0, data.Length);
-                    }
-                    contents.Clear();
+                    byte[] data = Encoding.UTF8.GetBytes(text);
+                    stream.Write(data, 0, data.Length);
                 }
+                contents.Clear();
             }
-            writing = false;
         }
     }
 }

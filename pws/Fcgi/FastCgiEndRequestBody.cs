@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pws
+namespace Pws.Fcgi
 {
     /// <summary>
     /// 请求结束内容

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
-namespace Pws
+namespace Pws.Fcgi
 {
     /// <summary>
     /// 请求信息
@@ -32,7 +31,7 @@ namespace Pws
 
         public string AsUTF8Body()
         {
-            return Encoding.UTF8.GetString(Body.ToArray());
+            return Encoding.UTF8.GetString(Body);
         }
 
         /// <summary>

@@ -11,8 +11,7 @@ namespace Pws
     /// </summary>
     public class PhpCgiServerProxy
     {
-        private System.Timers.Timer ticker;
-        private volatile Thread thread;
+        public TcpListener Listener { get; private set; }
         private PhpCgiProcessDispatcher dispatcher;
         public short Port { get; private set; }
 
@@ -23,21 +22,8 @@ namespace Pws
         public PhpCgiServerProxy(short port=9000)
         {
             Port = port;
+            Listener = new TcpListener(IPAddress.Any, Port);
             dispatcher = new PhpCgiProcessDispatcher();
-            thread = null;
-            ticker = new System.Timers.Timer();
-            ticker.Elapsed += (sender, args) =>
-            {
-                try
-                {
-                    Work();
-                }
-                catch (Exception e)
-                {
-                    e.ToString().Log();
-                }
-            };
-            ticker.Interval = 2000;
         }
 
         /// <summary>
@@ -45,8 +31,9 @@ namespace Pws
         /// </summary>
         public void Start()
         {
-            ticker.Enabled = true; // 会调用一次 Elapsed 委托
-            ticker.Start();
+            Listener.Start();
+            "接受第一个请求".Log();
+            Listener.BeginAcceptTcpClient(new AsyncCallback(Accept), Listener);
         }
 
         /// <summary>
@@ -54,66 +41,36 @@ namespace Pws
         /// </summary>
         public void Stop()
         {
-            ticker.Stop();
-            if (thread != null && thread.IsAlive)
-            {
-                thread = null;
-            }
+            Listener.Stop();
             dispatcher.Stop();
         }
 
         /// <summary>
         /// 代理分发请求
         /// </summary>
-        public void Work()
+        public void Accept(IAsyncResult iar)
         {
-            if (thread == null || !thread.IsAlive)
+            TcpListener listener = iar.AsyncState as TcpListener;
+            TcpClient source = listener.EndAcceptTcpClient(iar);
+
+            // 开始接受下一个请求。
+            "等待下一个请求".Log();
+            listener.BeginAcceptTcpClient(new AsyncCallback(Accept), listener);
+
+            source.SendTimeout = 300000;
+            source.ReceiveTimeout = 300000;
+            PhpCgiProcess worker = dispatcher.Dispatch();
+            ThreadPool.QueueUserWorkItem(e =>
             {
-                "启动监听线程".Log();
-                thread = new Thread(() =>
+                try
                 {
-                    IPAddress address = IPAddress.Parse("0.0.0.0");
-                    TcpListener listener = new TcpListener(address, Port);
-                    try
-                    {
-                        listener.Start();
-                        while (thread != null)
-                        {
-                            DateTime start = DateTime.Now;
-                            TcpClient source = listener.AcceptTcpClient();
-                            source.SendTimeout = 300000;
-                            source.ReceiveTimeout = 300000;
-                            PhpCgiProcess worker = dispatcher.Dispatch();
-                            TimeSpan d = DateTime.Now.Subtract(start);
-                            "分发解锁 {0:N} ms".Log(d.TotalMilliseconds);
-                            ThreadPool.QueueUserWorkItem(e =>
-                            {
-                                try
-                                {
-                                    worker.Start(source);
-                                }
-                                catch (Exception exception)
-                                {
-                                    exception.Message.Log();
-                                }
-                            });
-                            TimeSpan duration = DateTime.Now.Subtract(start);
-                            "分发请求耗时 {0:N} ms".Log(duration.TotalMilliseconds);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        e.ToString().Log();
-                    }
-                    finally
-                    {
-                        "线程关闭".Log();
-                        listener.Stop();
-                        thread = null;
-                    }
-                });
-                thread.Start();
-            }
+                    worker.Start(source);
+                }
+                catch (Exception exception)
+                {
+                    exception.Message.Log();
+                }
+            });
         }
     }
 }

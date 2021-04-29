@@ -50,6 +50,7 @@ namespace Pws
             {
                 e.ToString().Log();
             }
+            LogExtends.Finally();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Threading;
+using Pws.Fcgi;
 
 namespace Pws
 {
@@ -26,7 +27,7 @@ namespace Pws
             try
             {
                 bool able = true;
-                while (Volatile.Read(ref able))
+                while (able)
                 {
                     // 转发请求信息。
                     if (requester.DataAvailable)
@@ -41,7 +42,7 @@ namespace Pws
                             if (m == null) break;
                             if (m.Header.Type == FastCgiType.AbortRequest)
                             {
-                                Volatile.Write(ref able, false);
+                                able = false;
                             }
                             if (m.Header.Type == FastCgiType.BeginRequest)
                             {
@@ -70,7 +71,7 @@ namespace Pws
                             if (m == null) break;
                             if (m.Header.Type == FastCgiType.EndRequest)
                             {
-                                Volatile.Write(ref able, false);
+                                able = false;
                                 FastCgiEndRequestBody body = m.AsEndBody();
                                 "{0} => {1}".Log(m, body);
                             } else

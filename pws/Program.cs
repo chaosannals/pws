@@ -19,7 +19,7 @@ namespace Pws
                 e.ExceptionObject.ToString().Log();
             };
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => {
-                LogExtends.Write();
+                LogExtends.Finally();
             };
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]

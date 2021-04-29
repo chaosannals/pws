@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Pws
+namespace Pws.Fcgi
 {
     public class FastCgiParser
     {

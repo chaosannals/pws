@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Pws</RootNamespace>
     <AssemblyName>pws</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -41,17 +41,25 @@
     <Reference Include="System.Management" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZipStorer, Version=3.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZipStorer.3.6.0\lib\net20\ZipStorer.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FastCgiBeginRequestBody.cs" />
-    <Compile Include="FastCgiEndRequestBody.cs" />
-    <Compile Include="FastCgi.cs" />
-    <Compile Include="FastCgiHeader.cs" />
-    <Compile Include="FastCgiMessage.cs" />
-    <Compile Include="FastCgiParser.cs" />
+    <Compile Include="Aphp\PhpArchiveManager.cs" />
+    <Compile Include="Fcgi\FastCgiBeginRequestBody.cs" />
+    <Compile Include="Fcgi\FastCgiEndRequestBody.cs" />
+    <Compile Include="Fcgi\FastCgi.cs" />
+    <Compile Include="Fcgi\FastCgiHeader.cs" />
+    <Compile Include="Fcgi\FastCgiMessage.cs" />
+    <Compile Include="Fcgi\FastCgiParser.cs" />
     <Compile Include="FastCgiPhpDispatcher.cs" />
     <Compile Include="FastCgiPhpProxy.cs" />
+    <Compile Include="IniFile.cs" />
     <Compile Include="LogExtends.cs" />
+    <Compile Include="Pcgi\PhpCgiProcess.cs" />
+    <Compile Include="Pcgi\PhpCgiProcessDispatcher.cs" />
+    <Compile Include="Pcgi\PhpCgiServerProxy.cs" />
     <Compile Include="PhpCgiProcess.cs" />
     <Compile Include="PhpCgiProcessDispatcher.cs" />
     <Compile Include="PhpCgiServerProxy.cs" />
@@ -80,6 +88,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
