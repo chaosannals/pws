@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Net.Sockets;
-using System.Threading;
 using Pws.Fcgi;
 
-namespace Pws
+namespace Pws.Pcgi
 {
-    /// <summary>
-    /// 请求者
-    /// </summary>
-    public class FastCgiPhpRequester
+    public class PhpCgiTransfer
     {
         public TcpClient Source { get; private set; }
 
-        public FastCgiPhpRequester(TcpClient source)
+        public PhpCgiTransfer(TcpClient source)
         {
             Source = source;
         }
@@ -29,6 +24,7 @@ namespace Pws
             FastCgiParser tfcp = new FastCgiParser();
             while (true)
             {
+                // 请求数据传递
                 if (requester.DataAvailable)
                 {
                     int count = requester.Read(buffer, 0, buffer.Length);
@@ -41,6 +37,8 @@ namespace Pws
                         yield return m;
                     }
                 }
+
+                // 响应数据传递
                 if (responser.DataAvailable)
                 {
                     int count = responser.Read(buffer, 0, buffer.Length);

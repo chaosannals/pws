@@ -11,9 +11,9 @@ namespace Pws
     /// </summary>
     public class PhpCgiServerProxy
     {
-        public TcpListener Listener { get; private set; }
-        private PhpCgiProcessDispatcher dispatcher;
         public short Port { get; private set; }
+        public TcpListener Listener { get; private set; }
+        public PhpCgiProcessDispatcher Dispatcher { get; private set; }
 
         /// <summary>
         /// 初始化代理
@@ -23,7 +23,7 @@ namespace Pws
         {
             Port = port;
             Listener = new TcpListener(IPAddress.Any, Port);
-            dispatcher = new PhpCgiProcessDispatcher();
+            Dispatcher = new PhpCgiProcessDispatcher();
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Pws
         public void Stop()
         {
             Listener.Stop();
-            dispatcher.Stop();
+            Dispatcher.Stop();
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Pws
 
             source.SendTimeout = 300000;
             source.ReceiveTimeout = 300000;
-            PhpCgiProcess worker = dispatcher.Dispatch();
+            PhpCgiProcess worker = Dispatcher.Dispatch();
             ThreadPool.QueueUserWorkItem(e =>
             {
                 try

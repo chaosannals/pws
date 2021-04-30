@@ -10,7 +10,6 @@ namespace Pws
     public class PhpCgiProcessDispatcher
     {
         private System.Timers.Timer ticker;
-        private volatile object locking = new object();
         private volatile List<PhpCgiProcess> processes;
         private List<int> Ports { get { return processes.Select(p => p.Port).ToList<int>(); } }
 
@@ -22,7 +21,7 @@ namespace Pws
             {
                 try
                 {
-                    lock (locking)
+                    lock (processes)
                     {
                         PhpCgiProcess[] trash = processes.Where(p => p.IsRecyclable).ToArray();
                         processes = processes.Where(p => !trash.Contains(p)).ToList();
@@ -51,7 +50,7 @@ namespace Pws
                 ticker.Start();
             }
 
-            lock (locking)
+            lock (processes)
             {
                 PhpCgiProcess worker = null;
                 DateTime start = DateTime.Now;
@@ -83,7 +82,7 @@ namespace Pws
         /// </summary>
         public void Stop()
         {
-            lock(locking)
+            lock(processes)
             {
                 foreach(PhpCgiProcess process in processes)
                 {
@@ -96,27 +95,31 @@ namespace Pws
         /// 找到可用的端口
         /// </summary>
         /// <returns></returns>
-        public int FindUsablePort()
+        public int FindUsablePort(int start=29000)
         {
-            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
-            IPEndPoint[] tcpEndPoints = ipProperties.GetActiveTcpListeners();
-            List<int> ports = tcpEndPoints.Select(p => p.Port).Where(p => p > 9000).ToList<int>();
-            ports.AddRange(Ports);
-            ports.Sort();
-            int result = 9001;
-            int i = 0;
-            while (i < ports.Count && result < 60000)
+            lock (processes)
             {
-                if (result == ports[i])
+                IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+                IPEndPoint[] tcpEndPoints = ipProperties.GetActiveTcpListeners();
+                List<int> ports = tcpEndPoints.Select(p => p.Port).Where(p => p > start).ToList<int>();
+                ports.AddRange(Ports);
+                ports.Sort();
+                int result = start;
+                int i = 0;
+                while (i < ports.Count && result < 60000)
                 {
-                    ++result;
-                    ++i;
-                } else
-                {
-                    return result;
+                    if (result == ports[i])
+                    {
+                        ++result;
+                        ++i;
+                    }
+                    else
+                    {
+                        return result;
+                    }
                 }
+                return 0;
             }
-            return 0;
         }
     }
 }

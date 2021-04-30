@@ -53,13 +53,9 @@
     <Compile Include="Fcgi\FastCgiHeader.cs" />
     <Compile Include="Fcgi\FastCgiMessage.cs" />
     <Compile Include="Fcgi\FastCgiParser.cs" />
-    <Compile Include="FastCgiPhpDispatcher.cs" />
-    <Compile Include="FastCgiPhpProxy.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="LogExtends.cs" />
-    <Compile Include="Pcgi\PhpCgiProcess.cs" />
-    <Compile Include="Pcgi\PhpCgiProcessDispatcher.cs" />
-    <Compile Include="Pcgi\PhpCgiServerProxy.cs" />
+    <Compile Include="Pcgi\PhpCgiTransfer.cs" />
     <Compile Include="PhpCgiProcess.cs" />
     <Compile Include="PhpCgiProcessDispatcher.cs" />
     <Compile Include="PhpCgiServerProxy.cs" />
@@ -70,8 +66,6 @@
       <DependentUpon>PhpCgiService.cs</DependentUpon>
     </Compile>
     <Compile Include="PhpCgiTransfer.cs" />
-    <Compile Include="FastCgiPhpProcess.cs" />
-    <Compile Include="FastCgiPhpRequester.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
