@@ -12,6 +12,7 @@ namespace Pws
     public class PhpCgiServerProxy
     {
         public short Port { get; private set; }
+        public bool IsActive { get; private set; }
         public TcpListener Listener { get; private set; }
         public PhpCgiProcessDispatcher Dispatcher { get; private set; }
 
@@ -19,11 +20,12 @@ namespace Pws
         /// 初始化代理
         /// </summary>
         /// <param name="port"></param>
-        public PhpCgiServerProxy(short port=9000)
+        public PhpCgiServerProxy(PhpArchive archive, short port=9000)
         {
             Port = port;
+            IsActive = false;
             Listener = new TcpListener(IPAddress.Any, Port);
-            Dispatcher = new PhpCgiProcessDispatcher();
+            Dispatcher = new PhpCgiProcessDispatcher(archive);
         }
 
         /// <summary>
@@ -34,6 +36,7 @@ namespace Pws
             Listener.Start();
             "接受第一个请求".Log();
             Listener.BeginAcceptTcpClient(new AsyncCallback(Accept), Listener);
+            IsActive = true;
         }
 
         /// <summary>
@@ -43,6 +46,7 @@ namespace Pws
         {
             Listener.Stop();
             Dispatcher.Stop();
+            IsActive = false;
         }
 
         /// <summary>

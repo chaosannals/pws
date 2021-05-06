@@ -46,7 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aphp\PhpArchiveManager.cs" />
+    <Compile Include="PhpArchive.cs" />
     <Compile Include="Fcgi\FastCgiBeginRequestBody.cs" />
     <Compile Include="Fcgi\FastCgiEndRequestBody.cs" />
     <Compile Include="Fcgi\FastCgi.cs" />

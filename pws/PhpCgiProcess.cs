@@ -1,11 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
-using System.Net;
 using System.Net.Sockets;
-using System.Net.NetworkInformation;
-using System.Linq;
-using System.CodeDom;
 
 namespace Pws
 {
@@ -14,9 +10,8 @@ namespace Pws
     /// </summary>
     public class PhpCgiProcess
     {
-        public static string Here { get { return AppDomain.CurrentDomain.BaseDirectory; } }
-
         public int Port { get; private set; }
+        public string Here { get; private set; }
         public Process Process { get; private set; }
         public volatile bool IsReusable = false;
 
@@ -70,8 +65,13 @@ namespace Pws
             }
         }
 
-        public PhpCgiProcess(int port)
+        /// <summary>
+        /// 初始化。
+        /// </summary>
+        /// <param name="port"></param>
+        public PhpCgiProcess(string here, int port)
         {
+            Here = here;
             Port = port;
             Process = new Process();
             Process.StartInfo.FileName = Path.Combine(Here, "php-cgi.exe");

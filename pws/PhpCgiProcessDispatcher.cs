@@ -13,8 +13,11 @@ namespace Pws
         private volatile List<PhpCgiProcess> processes;
         private List<int> Ports { get { return processes.Select(p => p.Port).ToList<int>(); } }
 
-        public PhpCgiProcessDispatcher()
+        public PhpArchive Archive { get; private set; }
+
+        public PhpCgiProcessDispatcher(PhpArchive archive)
         {
+            Archive = archive;
             processes = new List<PhpCgiProcess>();
             ticker = new System.Timers.Timer();
             ticker.Elapsed += (sender, args) =>
@@ -67,7 +70,7 @@ namespace Pws
                 }
                 if (worker == null)
                 {
-                    worker = new PhpCgiProcess(FindUsablePort());
+                    worker = new PhpCgiProcess(Archive.FileFolder, FindUsablePort());
                     processes.Add(worker);
                     "新进程 {0:D} 接受调度".Log(worker.Port);
                 }
