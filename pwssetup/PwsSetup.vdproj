@@ -15,7 +15,19 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_49F08C9E0DE7400D8B49D42A3E7380C9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7EAB1B8D1D5746BEA4828449239D7C58"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_949D06D60C794080AA27827A1EB144BC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -194,10 +206,50 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_49F08C9E0DE7400D8B49D42A3E7380C9"
+            {
+            "SourcePath" = "8:php\\php-7.3.31-nts-Win32-VC15-x64.zip"
+            "TargetName" = "8:php-7.3.31-nts-Win32-VC15-x64.zip"
+            "Tag" = "8:"
+            "Folder" = "8:_A38A9F15C5E64431BCF15FFEC3C6C2C7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7EAB1B8D1D5746BEA4828449239D7C58"
             {
             "SourcePath" = "8:php\\php-8.0.6-nts-Win32-vs16-x64.zip"
             "TargetName" = "8:php-8.0.6-nts-Win32-vs16-x64.zip"
+            "Tag" = "8:"
+            "Folder" = "8:_A38A9F15C5E64431BCF15FFEC3C6C2C7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_949D06D60C794080AA27827A1EB144BC"
+            {
+            "SourcePath" = "8:php\\php-7.4.24-nts-Win32-vc15-x64.zip"
+            "TargetName" = "8:php-7.4.24-nts-Win32-vc15-x64.zip"
             "Tag" = "8:"
             "Folder" = "8:_A38A9F15C5E64431BCF15FFEC3C6C2C7"
             "Condition" = "8:"

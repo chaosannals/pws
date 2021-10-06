@@ -1,6 +1,6 @@
 ﻿namespace Pws
 {
-    partial class PhpCgiService
+    partial class PhpWindowsService
     {
         /// <summary> 
         /// 必需的设计器变量。
@@ -28,8 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            this.ServiceName = "Service1";
+            // 
+            // PhpWindowsService
+            // 
+            this.ServiceName = "PhpWindowsService";
+
         }
 
         #endregion

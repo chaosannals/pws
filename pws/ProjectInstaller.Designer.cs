@@ -41,8 +41,8 @@
             // serviceInstaller
             // 
             this.serviceInstaller.Description = "PHP CGI Windows Service";
-            this.serviceInstaller.DisplayName = "PHP CGI Service";
-            this.serviceInstaller.ServiceName = "PHPCGIService";
+            this.serviceInstaller.DisplayName = "PHP CGI Windows Service";
+            this.serviceInstaller.ServiceName = "PHPWindowsService";
             this.serviceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             this.serviceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.serviceInstaller_AfterInstall);
             // 

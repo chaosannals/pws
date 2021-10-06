@@ -24,7 +24,7 @@ namespace Pws
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new PhpCgiService()
+                new PhpWindowsService()
             };
             ServiceBase.Run(ServicesToRun);
         }
